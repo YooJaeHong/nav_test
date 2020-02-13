@@ -1,5 +1,9 @@
 package com.example.nav_test;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -22,8 +26,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+
+    Context context;
+
+    AlarmManager alarmManager;
+    PendingIntent pendingIntent;
 
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -34,7 +44,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//alarm
+       /* this.context = this;
 
+        alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        Intent alarm_reciver_Intent = new Intent(this.context,Alarm_Reciver.class);
+
+
+
+        pendingIntent = PendingIntent.getBroadcast(MainActivity.this,0,alarm_reciver_Intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.set(AlarmManager.RTC_WAKEUP,System.currentTimeMillis()+(10000),pendingIntent);
+        Toast.makeText(this,"alarm set after"+1+"second",Toast.LENGTH_LONG).show();
+        */
+
+//alarm end
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -83,5 +106,8 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+
+
 
 }

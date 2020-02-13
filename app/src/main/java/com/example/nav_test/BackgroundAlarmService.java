@@ -68,16 +68,23 @@ public class BackgroundAlarmService extends Service {
 
 
         if (Build.VERSION.SDK_INT >= 26 ) {
+
+            NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+
+            Log.e("build_ver",Build.VERSION.SDK);
             String CHANNEL_ID = "default";
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
                     "잔디 안채워졌을때 알림",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+                   NotificationManager.IMPORTANCE_DEFAULT);
 
             NotificationManager noti_manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
             noti_manager.createNotificationChannel(channel);
 
-            PendingIntent contentIntent = PendingIntent.getActivity(this, 0,new Intent (this,MainActivity.class),0);
+            PendingIntent contentIntent = PendingIntent.getActivity(this, 0,new Intent (this,loadingActivity.class),0);
+
 
 
             Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -88,6 +95,8 @@ public class BackgroundAlarmService extends Service {
                     .setContentIntent(contentIntent)
                     .build();
             startForeground(1,notification);
+            noti_manager.notify(1234,notification);
+            Log.e("startForeground","true");
 
 
         }

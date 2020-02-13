@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.MotionEventCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -78,6 +80,9 @@ public class mygrass extends Fragment {
 
 
         viewpager = (ViewPager) root.findViewById((R.id.pager_content));
+
+
+
         viewpager.setOffscreenPageLimit(mTabLayout.getTabCount());
 
         pagerAdapter = new tabPagerAdapter(getChildFragmentManager(),mTabLayout.getTabCount());

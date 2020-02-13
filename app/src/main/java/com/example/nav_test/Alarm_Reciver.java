@@ -17,6 +17,8 @@ public class Alarm_Reciver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        Log.e("onReceived","correct");
+
 
 
 
@@ -41,6 +43,7 @@ public class Alarm_Reciver extends BroadcastReceiver {
 
         int color_idx = raw_color.indexOf("#");
         String url_deleted_color = raw_color.substring(color_idx);
+        Log.e("url_deleted_color",url_deleted_color);
 
 
 
@@ -48,6 +51,7 @@ public class Alarm_Reciver extends BroadcastReceiver {
 
            // TODO: This method is called when the BroadcastReceiver is receiving
            // an Intent broadcast.
+           Log.e("onReceived send","correct");
            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                context.startForegroundService(service_intent);
            } else {

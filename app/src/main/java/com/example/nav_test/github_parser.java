@@ -23,8 +23,26 @@ public class github_parser extends AsyncTask<Void, Void, Elements> {
     List<String> all_date = new ArrayList<>();
     List<String> all_colors = new ArrayList<>();
 
+    String URL = "";
+    String name = "";
+
     Document doc = null;
     Elements dates = null;
+
+    public github_parser(){
+        name = "YooJaeHong";
+        URL = "https://github.com/YooJaeHong";
+    }
+
+
+    public github_parser(String id){
+        name = id;
+        URL = "https://github.com/"+id;
+    }
+
+
+
+
     protected  void onPreExecute(){
         super.onPreExecute();
     }
@@ -36,7 +54,7 @@ public class github_parser extends AsyncTask<Void, Void, Elements> {
 
             try {
                 //Log.e("파싱한하기전:","abce");
-                doc = Jsoup.connect("https://github.com/YooJaehong").userAgent(useragent).get();
+                doc = Jsoup.connect(URL).userAgent(useragent).get();
 
 
             }

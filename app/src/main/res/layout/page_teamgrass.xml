@@ -4,15 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.home.page_teamgrass"
     android:id="@+id/teamgrass_outer">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="this is teamgrass"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></TextView>
 
+    <ScrollView
+        android:id="@+id/teamgrass_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fadeScrollbars="false"
+        >
+        <LinearLayout
+            android:id="@+id/teamgrass_scrollview_layout"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:orientation="vertical"
+            android:background="@color/colorAccent">
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button_on_teamgrass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin"
+                app:srcCompat="@android:drawable/ic_dialog_email" />
+        </LinearLayout>
+    </ScrollView>
 </androidx.appcompat.widget.LinearLayoutCompat>
