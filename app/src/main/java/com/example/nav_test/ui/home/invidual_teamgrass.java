@@ -3,6 +3,8 @@ package com.example.nav_test.ui.home;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.GridLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -33,6 +37,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutionException;
@@ -135,8 +140,9 @@ public class invidual_teamgrass extends Fragment {
 
                 JSONArray repos_array = new JSONArray(receiveMsg);
                 String[] repos_url = new String[repos_array.length()];
+                Log.e("repos_array.length()",Integer.toString(repos_array.length()));
 
-                for(int j=0;i<repos_url.length;j++){
+                for(int j=0;j<repos_url.length;j++){
                     JSONObject each_repo = repos_array.getJSONObject(j);
                     repos_url[j] = each_repo.optString("url");
                     github_api_parser repos_parser = new github_api_parser(repos_url[j]+"/stats/commit_activity");
@@ -163,8 +169,8 @@ public class invidual_teamgrass extends Fragment {
                                 arrays_num +=days.getInt(l);
                                 Log.e("arrays_num",Integer.toString(arrays_num));
                                 commit_array.set(l+k*7,arrays_num);
-                                if(commit_array.getLast()>max_of_commit_array){
-                                    max_of_commit_array = commit_array.getLast();
+                                if(arrays_num>max_of_commit_array){
+                                    max_of_commit_array = arrays_num;
                                 }
 
                             }
@@ -180,8 +186,15 @@ public class invidual_teamgrass extends Fragment {
                 e.printStackTrace();
             }
 
-            ScrollView scroll = root.findViewById(R.id.teamgrass_scrollview_layout);
-            scroll.addView(createHorizonialLayout());
+            RecyclerView recyclerView = root.findViewById(R.id.teamgrass_calendar);
+            recyclerView.setLayoutManager(new GridLayoutManager(this));
+
+            recycler_view_adapter adapter = new recycler_view_adapter(commit_array);//
+
+
+
+
+            //scroll.addView(createHorizonialLayout());
 
             /*String repos[] = new String[user_parser.get_repos_url_size()];
             repos = user_parser.get_repos_url();
@@ -254,12 +267,17 @@ public class invidual_teamgrass extends Fragment {
         return root;
     }
 
-    public LinearLayout createHorizonialLayout(){
+    int col_num=3;
+    int row_num=3;
+
+
+    /*public LinearLayout createHorizonialLayout(){
         final LinearLayout all_day_layout = new LinearLayout(mContext);
         all_day_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         all_day_layout.setOrientation(LinearLayout.HORIZONTAL);
-        for(int i=0;i<52;i++){
+        for(int i=0;i<col_num;i++){
             all_day_layout.addView(createVerticalLayout(),all_day_layout.getChildCount()-1);
+            Log.e("verticalLayout","created");
         }
 
 
@@ -270,21 +288,50 @@ public class invidual_teamgrass extends Fragment {
         final LinearLayout week_layout =new LinearLayout(mContext);
         week_layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         week_layout.setOrientation(LinearLayout.VERTICAL);
-        for(int i=0;i<7;i++) {
+        for(int i=0;i<row_num;i++) {
             week_layout.addView(createFrame(commit_array.pop(), max_of_commit_array),week_layout.getChildCount()-1);
+            Log.e("frame","created");
         }
         return week_layout;
-    }
-
-    public FrameLayout createFrame(int commit_num, int max/*,String date*/) {
+    }*/
 
 
-        final FrameLayout teamgrass_block = new FrameLayout(mContext);
+
+
+
+
+    public void createFrame(int commit_num, int max/*,String date*/) {
+
+        ArrayList<String> colorList = new ArrayList<>();
+        float commitNum_devide_max = (float)commit_num/(float)max;
+        if(commitNum_devide_max == 0){
+            colorList.add("#ebedf0");
+        }
+        else if(commitNum_devide_max<0.25){
+            colorList.add("#c6e48b");
+        }
+        else if(commitNum_devide_max<0.5){
+            colorList.add("#7bc96f");
+        }
+        else if(commitNum_devide_max<0.75){
+            colorList.add("#239a3b");
+        }
+        else if(commitNum_devide_max<=1){
+            colorList.add("#196127");
+        }
+        else{
+            Log.e("devide error!", String.valueOf(commitNum_devide_max));
+        }
+
+
+
+        /*final FrameLayout teamgrass_block = new FrameLayout(mContext);
         final TextView day_block = new TextView(mContext);
         //if today
         //teamgrass_block.setBackgroundColor(blue);
         //
-        float commitNum_devide_max = (float)commit_num/(float)max;
+        day_block.setLayoutParams(new LinearLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT));
+        /*float commitNum_devide_max = (float)commit_num/(float)max;
         if(commitNum_devide_max == 0){
             day_block.setBackgroundColor(Color.parseColor("#ebedf0"));
         }
@@ -302,14 +349,12 @@ public class invidual_teamgrass extends Fragment {
         }
         else{
             Log.e("devide error!", String.valueOf(commitNum_devide_max));
-
         }
-
 
         teamgrass_block.addView(day_block);
 
 
-        return teamgrass_block;
+        return teamgrass_block;*/
     }
 
 

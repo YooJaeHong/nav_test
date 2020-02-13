@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
     tools:context="com.example.nav_test.ui.home.invidual_teamgrass">
 
-    <ScrollView
-        android:id="@+id/invidualTeamgrassScrollView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/teamgrass_calendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
