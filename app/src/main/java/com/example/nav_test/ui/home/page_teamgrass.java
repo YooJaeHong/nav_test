@@ -10,6 +10,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.util.TypedValue;
@@ -32,12 +35,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class page_teamgrass extends Fragment {
 
+    Fragment thisfrag = this;
 
 
     String path;
+    ArrayList<String> all_file_array = new ArrayList<>();
 
     String[] all_file_string;
 
@@ -74,6 +80,7 @@ public class page_teamgrass extends Fragment {
     }
 
     public void loadAllFile(String path){
+        ArrayList<String> temp_array = new ArrayList<>();
         File file = new File(path);
         Log.e("file_path",path);
 
@@ -84,56 +91,19 @@ public class page_teamgrass extends Fragment {
             all_file_string = new String[fileArray_length];
             for (int i = 0; i < fileArray_length; i++) {
                 Log.e("filename",fileArray[i].getName());
-                all_file_string[i] = fileArray[i].getName();
+                temp_array.add(fileArray[i].getName());
+                //all_file_string[i] = fileArray[i].getName();
                 //createlayout(fileArray[i].getName());
             }
         }
+        temp_array.add("this is for add button");
+
+        all_file_array = new ArrayList<>();
+        all_file_array.addAll(temp_array);
+
     }
-    public LinearLayout createlayout(String teamname) {
 
 
-        final LinearLayout teamgrass_block = new LinearLayout(mContext);
-        final int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, mContext.getResources().getDisplayMetrics());
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height);
-
-        //teamgrass_block.setBackgroundColor(mContext.getResources().getColor(R.color.colorAccent));
-        teamgrass_block.setGravity(Gravity.CENTER);
-
-        teamgrass_block.setLayoutParams(params);
-
-
-        final TextView Team_title = new TextView(mContext.getApplicationContext());
-
-        Team_title.setGravity(Gravity.CENTER | Gravity.CENTER);
-
-        String txt_removed_teamname = teamname.substring(0, teamname.lastIndexOf("."));
-        Team_title.setText(txt_removed_teamname);
-        //Team_title.setBackgroundResource(R.color.colorPrimaryDark);
-
-        teamgrass_block.addView(Team_title);
-
-
-        teamgrass_block.setOnClickListener(new View.OnClickListener() {
-                                               @Override
-
-                                               public void onClick(View view) {
-
-                                                   Bundle args = new Bundle();
-                                                   args.putString("selected_team_name", Team_title.getText().toString());
-                                                   Fragment fragment = new invidual_teamgrass();
-                                                   fragment.setArguments(args);
-                                                   FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                                   FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                                                   fragmentTransaction.replace(R.id.drawer_layout, fragment);
-                                                   fragmentTransaction.addToBackStack(null);
-
-                                                   fragmentTransaction.commit();
-
-                                               }
-                                           }
-        );
-return teamgrass_block;
-    }
             /*    Log.e("teamTitle.getText()", Team_title.getText().toString());
                 toTeamgrass.putExtra("selected_team_name", Team_title.getText().toString());
                 mContext.startActivity(toTeamgrass);
@@ -163,21 +133,77 @@ return teamgrass_block;
         View root = inflater.inflate(R.layout.page_teamgrass, container, false);
 
         Log.e("file_length",Integer.toString(fileArray_length));
-        for(int i=0;i<fileArray_length;i++){
+
+        /*for(int i=0;i<fileArray_length;i++){
             Log.e("block_name",all_file_string[i]);
             ((LinearLayout)root.findViewById(R.id.teamgrass_scrollview_layout)).addView(createlayout(all_file_string[i]));
             Log.e("each block","created");
+        }*/
 
-        }
+        RecyclerView recyclerView = root.findViewById(R.id.teamgrass_recyclerview);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext,LinearLayoutManager.VERTICAL,false));
+
+        final team_recycler_view_adapter adapter = new team_recycler_view_adapter(all_file_array);
+
+        adapter.setOnItemClickListener(new team_recycler_view_adapter.OnItemClickListener(){
+            @Override
+            public void onItemClick(View v, int pos) {
+                Fragment fragment;
+
+                if(pos ==all_file_array.size()-1){
+                    fragment = new input_teamgrass();
+                }
+                else {
+                    Bundle args = new Bundle();
+                    String txt_removed_teamname = all_file_array.get(pos).substring(0, all_file_array.get(pos).lastIndexOf("."));
+                    args.putString("selected_team_name", txt_removed_teamname);
+                    fragment = new invidual_teamgrass();
+                    fragment.setArguments(args);
+                }
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.drawer_layout, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+
+                loadAllFile(path);
+
+                adapter.notifyDataSetChanged();
+            }
+        });
+        adapter.setOnButtonClickListener((new team_recycler_view_adapter.OnButtonClickListener() {
+            @Override
+            public void onButtonClick(View v, int pos) {
+                File file = new File(path+"/"+all_file_array.get(pos));
+                if(file.exists()){
+                    file.delete();
+                }
+                loadAllFile(path);
+
+                adapter.notifyDataSetChanged();
+
+            }
+        }));
+
+
+
+        adapter.notifyDataSetChanged();
+
+        recyclerView.setAdapter(adapter);
+
+        //recyclerView.getAdapter().notifyDataSetChanged();
+
+
         Log.e("all block","created");
         //((LinearLayout)root.findViewById(R.id.teamgrass_scrollview_layout)).setLayoutParams(new ScrollView.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         //((ScrollView)root.findViewById(R.id.teamgrass_scrollview));//setLayoutParams(new LinearLayoutCompat.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.MATCH_PARENT));
         //root.findViewById(R.id.teamgrass_scrollview).invalidate();
 
-        FloatingActionButton fab = root.findViewById(R.id.button_on_teamgrass);
+        //FloatingActionButton fab = root.findViewById(R.id.button_on_teamgrass);
 
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        /*fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Fragment fragment = new input_teamgrass();
@@ -189,7 +215,7 @@ return teamgrass_block;
 
 
             }
-        });//버블
+        });*///버블
         //((LinearLayout)root.findViewById(R.id.teamgrass_scrollview_layout)).addView(fab);
         Log.e("bubble","created");
         return root;

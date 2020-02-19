@@ -1,5 +1,6 @@
 package com.example.nav_test.ui.home;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -37,9 +39,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 
@@ -52,6 +63,9 @@ public class invidual_teamgrass extends Fragment {
     HashMap<String,Integer> date_user_contributions;
     HashMap<String, int[][]> user_commitList;
 
+    HashMap<String, HashMap<String,Integer>>user_date_commitnum = new HashMap<>();
+    HashMap<String,Integer>total_date_commitnum = new HashMap<>();
+
 
     String path;
     String which_block;
@@ -60,22 +74,61 @@ public class invidual_teamgrass extends Fragment {
     String [] commits_week;
     int[][] commits_data;
 
-    LinkedList<Integer> commit_array= new LinkedList<>();
+    ArrayList<Integer> commit_for_recycler = new ArrayList<>();
+    ArrayList<Integer> commit_array= new ArrayList<>();
     int max_of_commit_array = 0;
-    LinkedList<String> name_array = new LinkedList<>();
+    int max_for_recycler = 0;
+    ArrayList<String> name_array = new ArrayList<>();
+    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
 
 
 
 
+
+
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         mContext = this.getContext();
         which_block =getArguments().getString("selected_team_name");
+        path = requireContext().getFilesDir().getPath()+File.separator+"teamname";
+
+
         for(int i=0;i<52*7;i++){
             commit_array.add(0);
         }
+        //파일명 받아오기
+        File file = new File(path+"/"+which_block+".txt");
+        try {
+            FileReader filereader = new FileReader(file);
+            BufferedReader bufreader = new BufferedReader(filereader);
+            String line = "";
+
+            while((line = bufreader.readLine()) != null){
+                name_array.add(line);
+
+                Log.e("registered id", name_array.get(0));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //파일명 array에 맞춰 파싱
+        parse_all();
+
+
+
+
+
     }
+
+
     @Override
             public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                      Bundle savedInstanceState) {
@@ -86,50 +139,38 @@ public class invidual_teamgrass extends Fragment {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-        path = requireContext().getFilesDir().getPath()+File.separator+"teamname";
         /*Intent intent = getActivity().getIntent();
         String which_block = intent.getExtras().getString("selected_team_name");*/
         Log.e("received by Teamgrass",which_block);
 
-        File file = new File(path+"/"+which_block+".txt");
-        Log.e("file_path", file.getPath());
+
+        //Log.e("file_path", file.getPath());
 
         HashMap<String,Integer> date_name_contributions = new HashMap<>();
         HashMap<String,Integer[][]> uesr_commitList=  new HashMap<>();
 
 
 
+
+
+        Log.e("registered id", name_array.get(0));
+
+        /*create_grid_runnable grid = new create_grid_runnable(name_array);
         try {
-            FileReader filereader = new FileReader(file);
-            BufferedReader bufreader = new BufferedReader(filereader);
-            String line = "";
-
-            while((line = bufreader.readLine()) != null){
-                name_array.add(line);
-
-                Log.e("registered id", name_array.getLast());
-            }
-        } catch (FileNotFoundException e) {
+            commit_array.addAll(grid.execute().get());
+        } catch (ExecutionException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        */
 
 
 
 
-        for(int i=0;i<name_array.size();i++) {
+
+
+        /*for(int i=0;i<name_array.size();i++) {
 
             github_api_parser user_parser = new github_api_parser("https://api.github.com/users/" + name_array.get(i)+"/repos");
             Log.e("new parser","created");
@@ -186,11 +227,7 @@ public class invidual_teamgrass extends Fragment {
                 e.printStackTrace();
             }
 
-            RecyclerView recyclerView = root.findViewById(R.id.teamgrass_calendar);
-            recyclerView.setLayoutManager(new GridLayoutManager(this));
-
-            recycler_view_adapter adapter = new recycler_view_adapter(commit_array);//
-
+*/
 
 
 
@@ -224,9 +261,49 @@ public class invidual_teamgrass extends Fragment {
                     //https://www.techiedelight.com/implement-map-with-multiple-keys-multikeymap-java/
                     // commit마다 날짜, 변경갰수, commit 한사람 return 가능
                 }
-            }*/
+            }
 
-        }//name_array for문 종료
+        }*///name_array for문 종료
+        //Runnable create_grid = new ;
+
+
+        TextView textView = new TextView(mContext);
+        ArrayList<Integer> for_test = new ArrayList<>();
+
+        for(int i=0;i<7*52;i++) {
+            for_test.add(3);
+        }
+
+        int for_test_max = 5;
+
+        textView.setText("1234");
+
+        Log.e("text","passed");
+
+
+
+        RecyclerView recyclerView = root.findViewById(R.id.teamgrass_calendar);
+
+        recyclerView.setLayoutManager(new GridLayoutManager(mContext,7,GridLayoutManager.HORIZONTAL,false));
+
+        recycler_view_adapter adapter = new recycler_view_adapter(commit_for_recycler,max_for_recycler);
+
+        recyclerView.setAdapter(adapter);
+
+
+
+
+        recyclerView.getAdapter().notifyDataSetChanged();
+
+
+
+
+
+
+
+
+        //
+
 
 
 /*
@@ -266,6 +343,7 @@ public class invidual_teamgrass extends Fragment {
 */
         return root;
     }
+
 
     int col_num=3;
     int row_num=3;
@@ -358,6 +436,154 @@ public class invidual_teamgrass extends Fragment {
     }
 
 
+
+    private ArrayList<Integer> parse_all(){
+        ArrayList<String> keyList = new ArrayList<>();
+        for(int i=0;i<name_array.size();i++) {
+
+            github_api_parser user_parser = new github_api_parser("https://api.github.com/users/" + name_array.get(i) + "/subscriptions");
+            Log.e("new parser", "created");
+            try {
+
+                String receiveMsg = user_parser.execute().get();
+
+
+                JSONArray repos_array = new JSONArray(receiveMsg);
+                String[] repos_url = new String[repos_array.length()];
+                Log.e("repos_array.length()", Integer.toString(repos_array.length()));
+
+                for (int j = 0; j < repos_url.length; j++) {
+                    JSONObject each_repo = repos_array.getJSONObject(j);
+                    repos_url[j] = each_repo.optString("url");
+                    github_api_parser repos_parser = new github_api_parser(repos_url[j] + "/commits");
+
+                    String commits_message = repos_parser.execute().get();
+                    if (commits_message != null) {
+                        Log.e("commit_message", commits_message);
+
+                        //String crappyPrefix ="";
+
+                        JSONArray commits_array = new JSONArray(commits_message);
+
+                        //https://api.github.com/repos/YooJaeHong/android_grass/commits
+                        //commits_week = new String[commits_array.length()];
+                        //commits_data = new int[commits_array.length()][7];
+                        String last_date = "empty_now";
+
+                        for (int k = 0; k < commits_array.length(); k++) {
+                            JSONObject each_commit = commits_array.getJSONObject(k);//가장 바깥
+                            //commits_week[k] = each_week.optString("week");//커밋시간 알아내기:->필요없겠다
+                            //Log.e("week", commits_week[k]);
+
+                            if(each_commit.has("author")&&!each_commit.isNull("author")) {
+
+                                JSONObject days = each_commit.getJSONObject("commit");
+                                Log.e("author", "before");
+
+                                JSONObject author = each_commit.getJSONObject("author");
+                                Log.e("author", "after");
+                                JSONObject commit_author = days.getJSONObject("author");
+
+
+                                String name = author.optString("login");
+                                String date = commit_author.optString("date");
+                                String date_split = date.split("T", 2)[0];
+                                Log.e("name", name);
+                                Log.e("name_arrays",name_array.get(i));
+                                Log.e("date", date);
+                                Log.e("date_split",date_split);
+
+
+                                if (name_array.get(i).equals(name)) {
+                                    if(!user_date_commitnum.containsKey(name)){
+
+                                        HashMap<String,Integer> newMap = new HashMap<>();
+
+                                        user_date_commitnum.put(name,newMap);
+
+                                    }
+
+                                    Log.e("getnull", "before");
+                                    if (user_date_commitnum.get(name).containsKey(date_split)) {
+                                        Log.e("notempty", "user");
+                                        int now_num = user_date_commitnum.get(name).get(date_split);
+                                        user_date_commitnum.get(name).put(date_split, now_num + 1);
+                                        int now_total_num = total_date_commitnum.get(date_split);
+                                        total_date_commitnum.put(date_split, now_total_num + 1);
+                                    }
+                                    else if (!user_date_commitnum.get(name).containsKey(date_split)) {
+                                        Log.e("empty","user");
+                                        user_date_commitnum.get(name).put(date_split, 1);
+                                        if (!total_date_commitnum.containsKey(date_split)) {
+                                            Log.e("empty","total");
+                                            total_date_commitnum.put(date_split, 1);
+                                            keyList.add(date_split);
+                                        }
+                                        else if (total_date_commitnum.containsKey(date_split)) {
+                                            Log.e("notempty","total");
+                                            int now_total_num = total_date_commitnum.get(date_split);
+                                            Log.e("now_total_num",Integer.toString(now_total_num));
+
+                                            total_date_commitnum.put(date_split, now_total_num + 1);
+                                            Log.e("dupkey","ok");
+
+                                            Log.e("date_split", date_split);
+                                        }
+                                        else{
+                                            Log.e("total_date_commitnum","contain not true and false");
+                                        }
+                                    }
+                                    else{
+                                        Log.e("user_date_commitnum","contain not true and false");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //user_commitList.put(name_array.get(i),commits_data);//유저이름과 커밋리스트 연동
+                }
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Date today = new Date();
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+
+
+        for(int i=0;i<keyList.size();i++){
+            try {
+                int commit_num = total_date_commitnum.get(keyList.get(i));
+                if(max_of_commit_array < commit_num){
+                    max_of_commit_array = commit_num;
+                    Log.e("max",Integer.toString(max_of_commit_array));
+                }
+                Date commit_date = format.parse(keyList.get(i));
+                Log.e("commit_date",keyList.get(i));
+                long diff = today.getTime()-commit_date.getTime();
+                int diffday = (int)(diff/(24*60*60*1000));
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(today);
+                int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+
+                commit_array.set((52*7) - 6 + dayOfWeek - diffday,commit_num);//-7+요일
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
+        commit_for_recycler.addAll(commit_array);
+        max_for_recycler = max_of_commit_array;
+        return commit_array;
+    }
 
 
 }

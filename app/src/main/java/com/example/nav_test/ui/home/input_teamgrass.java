@@ -8,6 +8,8 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +38,7 @@ public class input_teamgrass extends Fragment {
     EditText ed = null;
     final List<EditText> allEds = new ArrayList<EditText>();
 
+    Fragment thisfrag = this;
 
     View root = null;
 
@@ -83,6 +86,8 @@ public class input_teamgrass extends Fragment {
 
                 allEds.add(ed);
                 outer.addView(ed);
+
+
             }
         });
         confirm.setOnClickListener(new View.OnClickListener() {
@@ -116,9 +121,20 @@ public class input_teamgrass extends Fragment {
                     e.printStackTrace();
                 }
 
+
+                FragmentManager manager = getActivity().getSupportFragmentManager();
+                FragmentTransaction trans;
+                trans = manager.beginTransaction();
+                trans.remove(thisfrag);
+                trans.commit();
+
+
+
             }
 
         });
+
+
 
 
 
@@ -139,6 +155,5 @@ public class input_teamgrass extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
-
 
 }

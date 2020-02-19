@@ -86,8 +86,9 @@ public class mygrass extends Fragment {
         viewpager.setOffscreenPageLimit(mTabLayout.getTabCount());
 
         pagerAdapter = new tabPagerAdapter(getChildFragmentManager(),mTabLayout.getTabCount());
-
+        pagerAdapter.notifyDataSetChanged();
         viewpager.setAdapter(pagerAdapter);
+
 
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
