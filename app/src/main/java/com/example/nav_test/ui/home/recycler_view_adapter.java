@@ -64,7 +64,7 @@ public class recycler_view_adapter extends RecyclerView.Adapter<recycler_view_ad
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        cal.add(Calendar.DATE,-7*52-Calendar.DAY_OF_WEEK);
+        cal.add(Calendar.DATE,(8-cal.get(Calendar.DAY_OF_WEEK)-7*52));
         cal.add(Calendar.DATE,position);
 
 

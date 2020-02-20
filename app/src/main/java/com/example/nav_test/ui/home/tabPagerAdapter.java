@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -17,7 +16,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.nav_test.R;
 
-public class tabPagerAdapter extends FragmentPagerAdapter   {
+public class tabPagerAdapter extends FragmentPagerAdapter {
     private Context mContext = null;
 
     private  int tabCount;
@@ -42,8 +41,6 @@ public class tabPagerAdapter extends FragmentPagerAdapter   {
 
 
     }
-
-
 
     @Override
     public Fragment getItem(int position){
@@ -73,17 +70,23 @@ public class tabPagerAdapter extends FragmentPagerAdapter   {
 
 
         }*/
-        notifyDataSetChanged();
+
         return tab_num[position];
     }
+
+    @Override
+    public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
+    }
+
+
+
+
+
     @Override
     public int getCount() {
         return tabCount;
     }
-
-
-
-
 
     /*@Override
     public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {

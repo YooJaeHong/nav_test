@@ -572,7 +572,9 @@ public class invidual_teamgrass extends Fragment {
                 cal.setTime(today);
                 int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 
-                commit_array.set((52*7) - 6 + dayOfWeek - diffday,commit_num);//-7+요일
+                if(((52*7) -8+ dayOfWeek - diffday)>=0) {
+                    commit_array.set((52 * 7) - 8 + dayOfWeek - diffday, commit_num);//-7+요일
+                }
             } catch (ParseException e) {
                 e.printStackTrace();
             }

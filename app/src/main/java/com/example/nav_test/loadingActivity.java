@@ -10,6 +10,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 

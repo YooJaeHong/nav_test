@@ -305,6 +305,8 @@ public class page_mygrass extends Fragment {
                 e.printStackTrace();
             }
         }
+
+
         //나머지요일
         for(int i=2;i<=24;i++){
             for(int j=1;j<=7;j++){
@@ -335,13 +337,6 @@ public class page_mygrass extends Fragment {
         long push_block_color_end = System.currentTimeMillis();
 
         Log.d("timecheck","time:" +(push_block_color_end-push_block_color_start));
-
-
-
-
-
-
-
 
 
         return root;

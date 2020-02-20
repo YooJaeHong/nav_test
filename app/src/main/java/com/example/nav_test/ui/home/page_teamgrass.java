@@ -3,6 +3,7 @@ package com.example.nav_test.ui.home;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
@@ -35,6 +36,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.util.ArrayList;
 
 public class page_teamgrass extends Fragment {
@@ -44,6 +53,9 @@ public class page_teamgrass extends Fragment {
 
     String path;
     ArrayList<String> all_file_array = new ArrayList<>();
+    Path sharedDirectoryPath;
+    WatchKey watchKey;
+    WatchService watchService;
 
     String[] all_file_string;
 
@@ -98,8 +110,11 @@ public class page_teamgrass extends Fragment {
         }
         temp_array.add("this is for add button");
 
-        all_file_array = new ArrayList<>();
+        all_file_array.clear();
         all_file_array.addAll(temp_array);
+
+
+
 
     }
 
@@ -140,7 +155,7 @@ public class page_teamgrass extends Fragment {
             Log.e("each block","created");
         }*/
 
-        RecyclerView recyclerView = root.findViewById(R.id.teamgrass_recyclerview);
+        final RecyclerView recyclerView = root.findViewById(R.id.teamgrass_recyclerview);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext,LinearLayoutManager.VERTICAL,false));
 
@@ -153,6 +168,45 @@ public class page_teamgrass extends Fragment {
 
                 if(pos ==all_file_array.size()-1){
                     fragment = new input_teamgrass();
+
+
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.add(R.id.drawer_layout, fragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+
+                    Thread thread = new Thread(()-> {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            try {
+
+                                sharedDirectoryPath = Paths.get(path);
+
+                                watchService = FileSystems.getDefault().newWatchService();
+                                watchKey = sharedDirectoryPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            while (true) {
+                                for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
+                                    loadAllFile(path);
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                    thread.start();
+
+
+
+
+
+
+
+
                 }
                 else {
                     Bundle args = new Bundle();
@@ -160,16 +214,13 @@ public class page_teamgrass extends Fragment {
                     args.putString("selected_team_name", txt_removed_teamname);
                     fragment = new invidual_teamgrass();
                     fragment.setArguments(args);
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.drawer_layout, fragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
                 }
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.drawer_layout, fragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
 
-                loadAllFile(path);
-
-                adapter.notifyDataSetChanged();
             }
         });
         adapter.setOnButtonClickListener((new team_recycler_view_adapter.OnButtonClickListener() {
@@ -179,16 +230,18 @@ public class page_teamgrass extends Fragment {
                 if(file.exists()){
                     file.delete();
                 }
-                loadAllFile(path);
 
-                adapter.notifyDataSetChanged();
+                all_file_array.remove(pos);
+                adapter.notifyItemRemoved(pos);
+                adapter.notifyItemRangeChanged(pos,all_file_array.size());
+
+                //adapter.notifyDataSetChanged();
+                //loadAllFile(path);
 
             }
         }));
 
 
-
-        adapter.notifyDataSetChanged();
 
         recyclerView.setAdapter(adapter);
 
