@@ -144,9 +144,18 @@ public class input_teamgrass extends Fragment {
                 View view = getActivity().getCurrentFocus();
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                image_added.buildDrawingCache();
-                Bitmap bitmap = image_added.getDrawingCache();
-                saveBitmapTojpeg(bitmap,teamname+".jpg");
+
+
+
+                if (image_added.getDrawable()!=null){
+                    image_added.buildDrawingCache();
+                    Bitmap bitmap = image_added.getDrawingCache();
+                    saveBitmapTojpeg(bitmap,teamname);
+
+                }
+
+
+
 
                 FragmentManager manager = getActivity().getSupportFragmentManager();
                 FragmentTransaction trans;

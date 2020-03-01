@@ -6,23 +6,26 @@
     android:id="@+id/team_frame"
     android:layout_width="match_parent"
     android:layout_height="100dp"
+    android:layout_margin="2dp"
+
     >
-
-
 
 
     <FrameLayout
         android:id="@+id/team_image_frame"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:background="#EEEEEE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/appCompatImageView"
+            android:id="@+id/recycler_imageview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="5dp">
+            android:layout_margin="5dp"
+            android:background="@drawable/no_pic">
 
         </androidx.appcompat.widget.AppCompatImageView>
 
@@ -32,6 +35,7 @@
         android:id="@+id/constraintLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#cccccc"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/team_image_frame"

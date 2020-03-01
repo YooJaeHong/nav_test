@@ -1,13 +1,17 @@
 package com.example.nav_test.ui.home;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.nav_test.R;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class team_recycler_view_adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -36,12 +41,14 @@ public class team_recycler_view_adapter extends RecyclerView.Adapter<RecyclerVie
 
     public class ViewHolder0 extends RecyclerView.ViewHolder{
         TextView title;
+        ImageView image;
         Button delete;
 
         ViewHolder0(View itemView){
             super(itemView);
             delete = itemView.findViewById(R.id.team_delete_button);
             title = itemView.findViewById(R.id.team_title);//수정 필요!
+            image = itemView.findViewById(R.id.recycler_imageview);
 
             delete.setOnClickListener(new Button.OnClickListener(){
                 @Override
@@ -142,7 +149,16 @@ public class team_recycler_view_adapter extends RecyclerView.Adapter<RecyclerVie
                 ViewHolder0 viewHolder0 = (ViewHolder0)holder;
                 String teamname = mData.get(position);
                 String txt_removed_teamname = teamname.substring(0, teamname.lastIndexOf("."));
+
                 viewHolder0.title.setText(txt_removed_teamname);
+
+                File file = new File("/data/data/com.example.nav_test/cache/"+txt_removed_teamname+".jpg" );
+
+                Log.e("image path","/data/data/com.example.nav_test/cache/"+txt_removed_teamname+".jpg");
+                if (file.exists()&&file != null) {
+                    Bitmap bitmap = BitmapFactory.decodeFile("/data/data/com.example.nav_test/cache/"+txt_removed_teamname+".jpg");
+                    viewHolder0.image.setImageBitmap(bitmap);
+                }
 
                 break;
             case 2:

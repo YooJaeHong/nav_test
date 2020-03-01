@@ -449,6 +449,7 @@ public class invidual_teamgrass extends Fragment {
 
 
                 JSONArray repos_array = new JSONArray(receiveMsg);
+                
                 String[] repos_url = new String[repos_array.length()];
                 Log.e("repos_array.length()", Integer.toString(repos_array.length()));
 

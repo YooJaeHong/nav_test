@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.example.nav_test.MainActivity;
 import com.example.nav_test.R;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -166,7 +167,7 @@ public class page_teamgrass extends Fragment {
             public void onItemClick(View v, int pos) {
                 Fragment fragment;
 
-                if(pos ==all_file_array.size()-1){
+                if(pos ==all_file_array.size()-1) {
                     fragment = new input_teamgrass();
 
 
@@ -177,37 +178,45 @@ public class page_teamgrass extends Fragment {
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
 
-                    Thread thread = new Thread(()-> {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            try {
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
 
-                                sharedDirectoryPath = Paths.get(path);
-
-                                watchService = FileSystems.getDefault().newWatchService();
-                                watchKey = sharedDirectoryPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+                        public void run() {
 
 
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            while (true) {
-                                for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
-                                    loadAllFile(path);
-                                    break;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                try {
+
+                                    sharedDirectoryPath = Paths.get(path);
+
+                                    watchService = FileSystems.getDefault().newWatchService();
+                                    watchKey = sharedDirectoryPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                while (true) {
+                                    for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
+                                        getActivity().runOnUiThread(new Runnable(){
+                                            @Override
+                                            public void run() {
+                                                loadAllFile(path);
+                                                Log.e("watchevent", "occured");
+                                                adapter.notifyDataSetChanged();
+
+                                            }
+                                        });
+                                        break;
+                                    }
                                 }
                             }
+
                         }
                     });
                     thread.start();
+                }//onclick end
 
 
-
-
-
-
-
-
-                }
                 else {
                     Bundle args = new Bundle();
                     String txt_removed_teamname = all_file_array.get(pos).substring(0, all_file_array.get(pos).lastIndexOf("."));
@@ -301,3 +310,4 @@ public class page_teamgrass extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 }
+
